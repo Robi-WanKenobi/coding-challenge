@@ -1,1 +1,49 @@
-/* You can add global styles to this file, and also import other style files */
+/*
+Table
+ */
+tbody tr:hover {
+  cursor: pointer;
+}
+.table thead th {
+  border-top: none;
+}
+.full {
+  margin-right: 0px;
+  margin-left: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+/*
+Form
+ */
+.top-form {
+  margin: 40px;
+}
+.shadow {
+  -moz-box-shadow:    3px 3px 5px 6px #ccc;
+  -webkit-box-shadow: 3px 3px 5px 6px #ccc;
+  box-shadow:         3px 3px 5px 6px #ccc;
+}
+input{
+  text-align:center;
+}
+
+/*
+Modal
+ */
+.modal-content {
+  border-radius: 0rem;
+}
+.modal-header {
+  padding-bottom: 1px;
+  padding-top: 5px;
+  padding-right: 8px;
+}
+.modal-body {
+  padding-top: 5px;
+}
+.modal-body .img-thumbnail {
+  width: 20px;
+  padding: 0px;
+}

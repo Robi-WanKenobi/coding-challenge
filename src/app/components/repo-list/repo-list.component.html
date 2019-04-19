@@ -1,0 +1,43 @@
+<div class="container-fluid full">
+  <form class="top-form">
+    <div class="form-group">
+      <input (input)="search($event.target.value)" class="form-control form-control-lg shadow" name="search" placeholder="Search for public repositories">
+    </div>
+  </form>
+
+  <app-loading [loading]="loading"></app-loading>
+
+  <table class="table table-hover" *ngIf="!loading">
+    <thead>
+    <tr>
+      <th class="text-center">{{repositoryCount}} repositories found</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let repo of repositories">
+      <td class="text-center" (click)="fetchRepository(repo?.node.name, repo?.node.owner.login, repo?.node.owner.avatarUrl)" data-toggle="modal" data-target="#repoModal">{{repo?.node.name}}</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="modal fade bd-example-modal-lg" id="repoModal">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-folder"></i> {{selectedRepoName}}</h5>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <h5><img src="{{selectedRepoOwnerAvatarUrl}}" alt="avatar" class="img-thumbnail"> {{selectedRepoOwner}}</h5>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">View on Github</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
