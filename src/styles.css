@@ -1,4 +1,11 @@
 /*
+Page title
+ */
+.page-title {
+  margin-top: 20px;
+}
+
+/*
 Form
  */
 .top-form {
@@ -30,10 +37,10 @@ Form
 Filters
  */
 .filters {
-  height: 20px;
+  margin-left: -15px;
 }
 .filters .badge {
-  margin-left: -5px;
+  margin-left: 10px;
   padding-top: -0.5em;
   padding-bottom: 0.5em;
   padding-left: 0.5em;
@@ -56,7 +63,7 @@ Table
   margin-top: 20px;
 }
 .n-repos {
-  margin-top: 20px;
+  margin-top: 30px;
   margin-bottom: 20px;
 }
 .table thead th {

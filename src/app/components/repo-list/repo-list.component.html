@@ -1,25 +1,27 @@
 <div class="container-fluid full">
-  <form class="top-form" #searchForm="ngForm" (ngSubmit)="search(searchForm)">
+  <h3 class="text-center page-title"><i class="fab fa-github-square"></i> Github public repositories search engine</h3>
+
+  <form class="top-form" #searchForm="ngForm" (ngSubmit)="addSearchTerm(searchForm)">
     <div class="form-group">
       <input #searchInput type="text" class="form-control shadow" [(ngModel)]="searchTerm" name="search" id="search"
-             placeholder="Search for public repositories by name or description" autocomplete="off" ngModel>
+             placeholder="Search by name or description" autocomplete="off" ngModel>
       <button class="btn btn-primary search-button shadow" type="submit"><i class="fas fa-search"></i></button>
     </div>
   </form>
-  <div class="col-md-12 filters">
-    <a *ngIf="searched" href="" (click)="clearSearch()" onclick="return false" class="badge badge-danger">{{searchedTerm}} x</a>
+  <div class="col-md-12 filters" *ngIf="searched">
+    <a *ngFor="let term of searchedTerms" href="" (click)="removeSearchTerm(term)" onclick="return false" class="badge badge-danger">{{term}} x</a>
   </div>
 
   <app-loading [loading]="loading"></app-loading>
 
   <div class="container-results" *ngIf="!loading">
 
-    <h6 class="text-center n-repos" *ngIf="results"><strong>{{repositoryCount}} public repositories found</strong></h6>
+    <h6 class="text-center n-repos" *ngIf="results"><strong>{{repositoryCount}} results found</strong></h6>
     <div class="container-no-results" *ngIf="!results">
       <div class="text-center">
         <i class="far fa-sad-tear fa-10x"></i>
       </div>
-      <h6 class="text-center"><strong>Sorry, no public repositories were found.</strong></h6>
+      <h6 class="text-center"><strong>Sorry, no results were found.</strong></h6>
     </div>
 
     <table class="table table-hover">

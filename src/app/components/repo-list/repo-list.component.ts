@@ -3,6 +3,7 @@ import { Apollo } from 'apollo-angular';
 import * as Query from '../../queries/queries';
 import 'rxjs/add/operator/map';
 import {RepositoriesService} from '../../services/repositories/repositories.service';
+import {forEach} from '@angular/router/src/utils/collection';
 
 @Component({
   selector: 'app-repo-list',
@@ -25,8 +26,9 @@ export class RepoListComponent implements OnInit {
   selectedRepoContributors: {};
   selectedRepoContributorsCount: number;
   searchTerm: '';
+  searchedTerms: Array<string> = [];
+  searchQuery: string;
   searched: boolean;
-  searchedTerm: '';
   results: boolean;
 
   @ViewChild('searchInput') nameField: ElementRef;
@@ -77,37 +79,47 @@ export class RepoListComponent implements OnInit {
     });
   }
 
-  search(searchForm) {
-    this.searchedTerm = searchForm.value.search;
-    console.log(this.searchedTerm.length);
-    if (this.searchedTerm.length !== 0) {
-      this.loading = true;
-      this.searched = true;
-      this.searchTerm = '';
-      this.nameField.nativeElement.blur();
-      this.apollo.watchQuery({
-        query: Query.SearchPublicRepositories,
-        variables: {queryString: 'is:public sort:stars ' + searchForm.value.search}
-      })
-        .valueChanges
-        .map((result: any) => result.data.search).subscribe((data) => {
-        this.repositories = data.edges;
-        this.repositoryCount = data.repositoryCount;
-        this.loading = false;
-        if (this.repositoryCount !== 0) {
-          this.results = true;
-        } else {
-          this.results = false;
-        }
-      });
+  addSearchTerm(searchForm) {
+    const term = searchForm.value.search;
+    this.searchedTerms.push(term);
+    this.search(this.searchedTerms);
+    this.searchTerm = '';
+    this.nameField.nativeElement.blur();
+  }
+
+  removeSearchTerm(term) {
+    const index = this.searchedTerms.indexOf(term);
+    this.searchedTerms.splice(term, 1);
+    this.loading = true;
+    if (this.searchedTerms.length === 0) {
+      this.searched = false;
+      this.getAllRepos();
+    } else {
+        this.search(this.searchedTerms);
     }
   }
 
-  clearSearch() {
+  search(searchTerms) {
     this.loading = true;
-    this.searchedTerm = '';
-    this.searched = false;
-    this.searchTerm = '';
-    this.getAllRepos();
-  }
+    this.searchQuery = '';
+    for (const term of searchTerms) {
+      this.searchQuery = this.searchQuery + ' ' + term;
+    }
+    this.apollo.watchQuery({
+      query: Query.SearchPublicRepositories,
+      variables: {queryString: 'is:public sort:stars ' + this.searchQuery}
+    })
+      .valueChanges
+      .map((result: any) => result.data.search).subscribe((data) => {
+      this.repositories = data.edges;
+      this.repositoryCount = data.repositoryCount;
+      if (this.repositoryCount !== 0) {
+        this.results = true;
+        this.searched = true;
+        this.loading = false;
+      } else {
+        this.results = false;
+      }
+    });
+    }
 }
