@@ -1,0 +1,9 @@
+version: '2'
+services:
+  app:
+    container_name: coding-challenge:1.0
+    build: .
+    command: ng serve
+    ports:
+    - "4200:4200"
+
