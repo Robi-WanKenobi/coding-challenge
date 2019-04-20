@@ -18,7 +18,7 @@ export class RepoListComponent implements OnInit {
   selectedRepoName: '';
   selectedRepoOwner: '';
   selectedRepoOwnerAvatarUrl: '';
-  selectedRepoContributors: any;
+  selectedRepoContributors: {};
   selectedRepoContributorsCount: '';
 
   constructor(private apollo: Apollo, private repoService: RepositoriesService) { }

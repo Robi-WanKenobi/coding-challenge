@@ -7,6 +7,7 @@ WORKDIR /codechallenge
 # Install app dependencies
 COPY package.json /codechallenge
 RUN cd /codechallenge
+RUN npm install -g @angular/cli
 RUN npm install --only=production
 
 # Bundle app source
