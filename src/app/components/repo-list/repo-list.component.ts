@@ -19,7 +19,7 @@ export class RepoListComponent implements OnInit {
   selectedRepoOwner: '';
   selectedRepoOwnerAvatarUrl: '';
   selectedRepoContributors: {};
-  selectedRepoContributorsCount: '';
+  selectedRepoContributorsCount: number;
 
   constructor(private apollo: Apollo, private repoService: RepositoriesService) { }
 
@@ -61,7 +61,7 @@ export class RepoListComponent implements OnInit {
     this.modalLoading = true;
     this.repoService.getContributors(owner, repo).then((res) => {
       this.selectedRepoContributors = res;
-      this.selectedRepoContributorsCount = this.selectedRepoContributors.length;
+      this.selectedRepoContributorsCount = Object.keys(this.selectedRepoContributors).length;
       this.modalLoading = false;
     }, (err) => {
       console.log(err);
