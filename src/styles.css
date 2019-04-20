@@ -33,7 +33,7 @@ Filters
   height: 20px;
 }
 .filters .badge {
-  margin-left: 25px;
+  margin-left: -5px;
   padding-top: -0.5em;
   padding-bottom: 0.5em;
   padding-left: 0.5em;
@@ -53,6 +53,7 @@ Table
 }
 .container-no-results {
   color: #6b6b6b;
+  margin-top: 20px;
 }
 .n-repos {
   margin-top: 20px;
