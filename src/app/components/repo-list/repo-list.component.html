@@ -1,21 +1,23 @@
 <div class="container-fluid full">
   <form class="top-form" #searchForm="ngForm" (ngSubmit)="search(searchForm)">
     <div class="form-group">
-      <input type="text" class="form-control shadow" name="search" id="search" placeholder="Search for public repositories" autocomplete="off" ngModel>
+      <input #searchInput type="text" class="form-control shadow" [(ngModel)]="searchTerm" name="search" id="search" placeholder="Search for public repositories by name or description" autocomplete="off" ngModel>
     </div>
   </form>
+  <div class="col-md-12 filters">
+    <a *ngIf="searched" href="" (click)="clearSearch()" onclick="return false" class="badge badge-danger">{{searchedTerm}} x</a>
+  </div>
 
   <app-loading [loading]="loading"></app-loading>
 
+  <h6 class="text-center n-repos" *ngIf="!loading"><strong>{{repositoryCount}} public repositories found</strong></h6>
   <table class="table table-hover" *ngIf="!loading">
-    <thead>
-    <tr>
-      <th class="text-center">{{repositoryCount}} repositories found</th>
-    </tr>
-    </thead>
     <tbody>
-    <tr *ngFor="let repo of repositories">
-      <td class="text-center" (click)="fetchRepository(repo?.node.name, repo?.node.owner.login, repo?.node.owner.avatarUrl)" data-toggle="modal" data-target="#repoModal">{{repo?.node.name}}</td>
+    <tr *ngFor="let repo of repositories" data-toggle="modal" data-target="#repoModal"
+        (click)="fetchRepository(repo?.node.name, repo?.node.url, repo?.node.description, repo?.node.owner.login, repo?.node.owner.avatarUrl)">
+      <td class="text-left"><img src="{{repo?.node.owner.avatarUrl}}" alt="owner_avatar" class="img-thumbnail"> {{repo?.node.owner.login}}</td>
+      <td class="text-center"><strong>{{repo?.node.name}}</strong></td>
+      <td class="text-right">{{repo?.node.stargazers.totalCount}} <i class="fas fa-star"></i></td>
     </tr>
     </tbody>
   </table>
@@ -31,19 +33,19 @@
         </div>
 
         <div class="modal-body">
-          <h5 class="text-center">{{selectedRepoContributorsCount}} contributors</h5>
+          <p>{{selectedRepoDescription}}</p>
           <table class="table">
             <tbody>
-            <tr *ngFor="let contributor of selectedRepoContributors">
-              <td class="text-left repo-contributor"><img src="{{contributor.avatar_url}}" alt="contributor_avatar" class="img-thumbnail"> {{contributor.login}}</td>
-              <td class="text-right">{{contributor.contributions}} contributions</td>
+            <tr *ngFor="let contributor of selectedRepoContributors" >
+                <td class="text-left repo-contributor"><img src="{{contributor.avatar_url}}" alt="contributor_avatar" class="img-thumbnail"> {{contributor.login}}</td>
+                <td class="text-right">{{contributor.contributions}} contributions</td>
             </tr>
             </tbody>
           </table>
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">View on Github</button>
+          <a class="btn btn-secondary btn-block" href="{{selectedRepoUrl}}" target="_blank">View on GitHub</a>
         </div>
 
       </div>
