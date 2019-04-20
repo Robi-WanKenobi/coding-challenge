@@ -1,7 +1,7 @@
 version: '2'
 services:
   app:
-    container_name: coding-challenge:1.0
+    container_name: coding-challenge
     build: .
     command: ng serve
     ports:
