@@ -61,7 +61,7 @@ export class RepoListComponent implements OnInit {
     this.modalLoading = true;
     this.repoService.getContributors(owner, repo).then((res) => {
       this.selectedRepoContributors = res;
-      this.selectedRepoContributorsCount = res.length;
+      this.selectedRepoContributorsCount = this.selectedRepoContributors.length;
       this.modalLoading = false;
     }, (err) => {
       console.log(err);
