@@ -1,7 +1,7 @@
 /*
 Table
  */
-tbody tr:hover {
+.table-hover tbody tr:hover {
   cursor: pointer;
 }
 .table thead th {
@@ -35,15 +35,24 @@ Modal
 .modal-content {
   border-radius: 0rem;
 }
+.repo-owner {
+  padding-left: 1rem;
+}
+.table td.repo-contributor {
+  padding-left: 1rem;
+}
 .modal-header {
-  padding-bottom: 1px;
+  padding-bottom: 8px;
   padding-top: 5px;
   padding-right: 8px;
 }
 .modal-body {
   padding-top: 5px;
+  padding-left: 0px;
+  padding-right: 0px;
 }
-.modal-body .img-thumbnail {
+.modal-content .img-thumbnail {
   width: 20px;
   padding: 0px;
+  margin-bottom: 5px;
 }

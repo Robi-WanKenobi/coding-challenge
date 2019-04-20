@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import * as Query from '../../queries/queries';
 import 'rxjs/add/operator/map';
+import {RepositoriesService} from '../../services/repositories/repositories.service';
 
 @Component({
   selector: 'app-repo-list',
@@ -13,13 +14,17 @@ export class RepoListComponent implements OnInit {
   repositories: Array<any> = [];
   repositoryCount: '';
   loading: boolean;
+  modalLoading: boolean;
   selectedRepoName: '';
   selectedRepoOwner: '';
   selectedRepoOwnerAvatarUrl: '';
+  selectedRepoContributors: any;
+  selectedRepoContributorsCount: '';
 
-  constructor(private apollo: Apollo) { }
+  constructor(private apollo: Apollo, private repoService: RepositoriesService) { }
 
   ngOnInit() {
+    this.modalLoading = false;
     this.loading = true;
     this.getAllRepos();
   }
@@ -38,18 +43,28 @@ export class RepoListComponent implements OnInit {
     this.selectedRepoName = name;
     this.selectedRepoOwner = owner;
     this.selectedRepoOwnerAvatarUrl = avatarUrl;
+    this.getContributors(this.selectedRepoOwner, this.selectedRepoName);
   }
 
-  search(searchTerm: string) {
-    if (searchTerm.length >= 3) {
-      this.loading = true;
-      this.apollo.watchQuery({ query: Query.SearchPublicRepositories, variables: {queryString: 'is:public ' + searchTerm}})
-        .valueChanges
-        .map((result: any) => result.data.search).subscribe((data) => {
-        this.repositories = data.edges;
-        this.repositoryCount = data.repositoryCount;
-        this.loading = false;
-      });
-    }
+  search(searchForm) {
+    this.loading = true;
+    this.apollo.watchQuery({ query: Query.SearchPublicRepositories, variables: {queryString: 'is:public ' + searchForm.value.search}})
+      .valueChanges
+      .map((result: any) => result.data.search).subscribe((data) => {
+      this.repositories = data.edges;
+      this.repositoryCount = data.repositoryCount;
+      this.loading = false;
+    });
+  }
+
+  getContributors(owner, repo) {
+    this.modalLoading = true;
+    this.repoService.getContributors(owner, repo).then((res) => {
+      this.selectedRepoContributors = res;
+      this.selectedRepoContributorsCount = res.length;
+      this.modalLoading = false;
+    }, (err) => {
+      console.log(err);
+    });
   }
 }

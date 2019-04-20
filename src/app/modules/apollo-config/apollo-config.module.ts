@@ -5,6 +5,7 @@ import { HttpLink , HttpLinkModule} from 'apollo-angular-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { setContext } from 'apollo-link-context';
 import { createHttpLink } from 'apollo-link-http';
+import * as Config from '../../config/config';
 
 @NgModule({
   declarations: [],
@@ -16,7 +17,7 @@ import { createHttpLink } from 'apollo-link-http';
 })
 export class ApolloConfigModule {
 
-  token = 'a1dc1e98820f452cd8435beba4449e617a12c693';
+  token = Config.gitHubToken;
 
   authLink = setContext((_, { headers }) => {
     return {
@@ -28,6 +29,6 @@ export class ApolloConfigModule {
   });
 
   constructor(apollo: Apollo, httpLink: HttpLink) {
-    apollo.create({ link: this.authLink.concat(createHttpLink({ uri: 'https://api.github.com/graphql' })), cache: new InMemoryCache()});
+    apollo.create({ link: this.authLink.concat(createHttpLink({ uri: Config.gitHubGraphqlRootUrl })), cache: new InMemoryCache()});
   }
 }
