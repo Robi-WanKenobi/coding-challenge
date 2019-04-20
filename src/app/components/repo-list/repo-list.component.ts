@@ -14,8 +14,8 @@ export class RepoListComponent implements OnInit {
   constructor(private apollo: Apollo, private repoService: RepositoriesService) { }
 
   repositories: Array<any> = [];
-  repositoryCount: '';
-  loading: boolean;
+  repositoryCount: number;
+  loading = true;
   modalLoading: boolean;
   selectedRepoName: '';
   selectedRepoUrl; '';
@@ -27,11 +27,13 @@ export class RepoListComponent implements OnInit {
   searchTerm: '';
   searched: boolean;
   searchedTerm: '';
+  results: boolean;
 
   @ViewChild('searchInput') nameField: ElementRef;
 
   ngOnInit() {
     this.getAllRepos();
+    this.loading = true;
   }
 
   getAllRepos() {
@@ -43,6 +45,7 @@ export class RepoListComponent implements OnInit {
       .map((result: any) => result.data.search).subscribe((data) => {
       this.repositories = data.edges;
       this.loading = false;
+      this.results = true;
     });
   }
 
@@ -51,7 +54,6 @@ export class RepoListComponent implements OnInit {
       .valueChanges
       .map((result: any) => result.data.search).subscribe((data) => {
       this.repositoryCount = data.repositoryCount;
-      this.loading = false;
     });
   }
 
@@ -76,19 +78,29 @@ export class RepoListComponent implements OnInit {
   }
 
   search(searchForm) {
-    this.loading = true;
     this.searchedTerm = searchForm.value.search;
-    this.searched = true;
-    this.searchTerm = '';
-    this.nameField.nativeElement.blur();
-    this.apollo.watchQuery({ query: Query.SearchPublicRepositories,
-      variables: {queryString: 'is:public sort:stars ' + searchForm.value.search}})
-      .valueChanges
-      .map((result: any) => result.data.search).subscribe((data) => {
-      this.repositories = data.edges;
-      this.repositoryCount = data.repositoryCount;
-      this.loading = false;
-    });
+    console.log(this.searchedTerm.length);
+    if (this.searchedTerm.length !== 0) {
+      this.loading = true;
+      this.searched = true;
+      this.searchTerm = '';
+      this.nameField.nativeElement.blur();
+      this.apollo.watchQuery({
+        query: Query.SearchPublicRepositories,
+        variables: {queryString: 'is:public sort:stars ' + searchForm.value.search}
+      })
+        .valueChanges
+        .map((result: any) => result.data.search).subscribe((data) => {
+        this.repositories = data.edges;
+        this.repositoryCount = data.repositoryCount;
+        this.loading = false;
+        if (this.repositoryCount !== 0) {
+          this.results = true;
+        } else {
+          this.results = false;
+        }
+      });
+    }
   }
 
   clearSearch() {

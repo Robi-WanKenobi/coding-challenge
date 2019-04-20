@@ -4,16 +4,26 @@ Form
 .top-form {
   margin-top: 40px;
   margin-bottom: 20px;
-  margin-right: 40px;
-  margin-left: 40px;
+  margin-right: 10px;
+  margin-left: 10px;
 }
 .shadow {
   -moz-box-shadow:    3px 3px 5px 6px #ccc;
   -webkit-box-shadow: 3px 3px 5px 6px #ccc;
   box-shadow:         3px 3px 5px 6px #ccc;
 }
-input{
+.full .form-group {
+  display: flex;
+  flex-direction: row;
+}
+.full .form-group input{
   text-align:center;
+  border-bottom-right-radius: 0px;
+  border-top-right-radius: 0px;
+}
+.full .form-group .search-button {
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 0px;
 }
 
 /*
@@ -38,6 +48,12 @@ Table
 .table-hover tbody tr:hover {
   cursor: pointer;
 }
+.fa-sad-tear {
+  margin-bottom: 20px;
+}
+.container-no-results {
+  color: #6b6b6b;
+}
 .n-repos {
   margin-top: 20px;
   margin-bottom: 20px;
@@ -56,6 +72,17 @@ td .img-thumbnail {
   width: 20px;
   padding: 0px;
   margin-bottom: 5px;
+}
+@media  screen and (max-width: 512px) {
+  .hide-mobile {
+    display: none;
+  }
+  .full td {
+    width: 50%;
+  }
+  .full td.repo-name {
+    text-align: right!important;
+  }
 }
 
 /*

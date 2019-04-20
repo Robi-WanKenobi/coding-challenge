@@ -1,7 +1,9 @@
 <div class="container-fluid full">
   <form class="top-form" #searchForm="ngForm" (ngSubmit)="search(searchForm)">
     <div class="form-group">
-      <input #searchInput type="text" class="form-control shadow" [(ngModel)]="searchTerm" name="search" id="search" placeholder="Search for public repositories by name or description" autocomplete="off" ngModel>
+      <input #searchInput type="text" class="form-control shadow" [(ngModel)]="searchTerm" name="search" id="search"
+             placeholder="Search for public repositories by name or description" autocomplete="off" ngModel>
+      <button class="btn btn-primary search-button shadow" type="submit"><i class="fas fa-search"></i></button>
     </div>
   </form>
   <div class="col-md-12 filters">
@@ -10,17 +12,27 @@
 
   <app-loading [loading]="loading"></app-loading>
 
-  <h6 class="text-center n-repos" *ngIf="!loading"><strong>{{repositoryCount}} public repositories found</strong></h6>
-  <table class="table table-hover" *ngIf="!loading">
-    <tbody>
-    <tr *ngFor="let repo of repositories" data-toggle="modal" data-target="#repoModal"
-        (click)="fetchRepository(repo?.node.name, repo?.node.url, repo?.node.description, repo?.node.owner.login, repo?.node.owner.avatarUrl)">
-      <td class="text-left"><img src="{{repo?.node.owner.avatarUrl}}" alt="owner_avatar" class="img-thumbnail"> {{repo?.node.owner.login}}</td>
-      <td class="text-center"><strong>{{repo?.node.name}}</strong></td>
-      <td class="text-right">{{repo?.node.stargazers.totalCount}} <i class="fas fa-star"></i></td>
-    </tr>
-    </tbody>
-  </table>
+  <div class="container-results" *ngIf="!loading">
+
+    <h6 class="text-center n-repos" *ngIf="results"><strong>{{repositoryCount}} public repositories found</strong></h6>
+    <div class="container-no-results" *ngIf="!results">
+      <div class="text-center">
+        <i class="far fa-sad-tear fa-10x"></i>
+      </div>
+      <h6 class="text-center"><strong>Sorry, no public repositories were found.</strong></h6>
+    </div>
+
+    <table class="table table-hover">
+      <tbody>
+      <tr *ngFor="let repo of repositories" data-toggle="modal" data-target="#repoModal"
+          (click)="fetchRepository(repo?.node.name, repo?.node.url, repo?.node.description, repo?.node.owner.login, repo?.node.owner.avatarUrl)">
+        <td class="text-left"><img src="{{repo?.node.owner.avatarUrl}}" alt="owner_avatar" class="img-thumbnail"> {{repo?.node.owner.login}}</td>
+        <td class="text-center repo-name"><strong>{{repo?.node.name}}</strong></td>
+        <td class="text-right hide-mobile">{{repo?.node.stargazers.totalCount}} <i class="fas fa-star"></i></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 
   <div class="modal fade" id="repoModal">
     <div class="modal-dialog">
