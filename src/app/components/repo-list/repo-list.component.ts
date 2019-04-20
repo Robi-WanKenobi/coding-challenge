@@ -116,10 +116,10 @@ export class RepoListComponent implements OnInit {
       if (this.repositoryCount !== 0) {
         this.results = true;
         this.searched = true;
-        this.loading = false;
       } else {
         this.results = false;
       }
+      this.loading = false;
     });
     }
 }
