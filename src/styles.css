@@ -41,10 +41,8 @@ Filters
 }
 .filters .badge {
   margin-left: 10px;
-  padding-top: -0.5em;
+  margin-bottom: 5px;
   padding-bottom: 0.5em;
-  padding-left: 0.5em;
-  padding-right: 0.5em;
   font-weight: 400;
   font-size: 1rem;
 }
@@ -62,6 +60,9 @@ Table
   color: #6b6b6b;
   margin-top: 20px;
 }
+.container-results table {
+  table-layout: fixed;
+}
 .n-repos {
   margin-top: 30px;
   margin-bottom: 20px;
@@ -75,6 +76,7 @@ Table
 }
 .full td {
   width: 33%;
+  word-break: break-word;
 }
 td .img-thumbnail {
   width: 20px;
@@ -87,6 +89,7 @@ td .img-thumbnail {
   }
   .full td {
     width: 50%;
+    word-break: break-word;
   }
   .full td.repo-name {
     text-align: right!important;
