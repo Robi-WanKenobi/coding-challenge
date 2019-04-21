@@ -4,11 +4,11 @@
   <form class="top-form" #searchForm="ngForm" (ngSubmit)="addSearchTerm(searchForm)">
     <div class="form-group">
       <input #searchInput type="text" class="form-control shadow" [(ngModel)]="searchTerm" name="search" id="search"
-             placeholder="Search by name or description" autocomplete="off" ngModel>
+             placeholder="Search by name or description" (focus)="clearFiltersClass()" autocomplete="off" ngModel>
       <button class="btn btn-primary search-button shadow" type="submit"><i class="fas fa-search"></i></button>
     </div>
   </form>
-  <div class="col-md-12 filters" *ngIf="searched && !loading">
+  <div #filtersContainer class="col-md-12 filters" *ngIf="searched && !loading">
     <a *ngFor="let term of searchedTerms" href="" (click)="removeSearchTerm(term)" onclick="return false" class="badge badge-danger">{{term}} x</a>
   </div>
 
