@@ -2,14 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import 'rxjs/add/operator/map';
 import * as Config from '../../config/config';
-import {Apollo} from 'apollo-angular';
+import { Apollo } from 'apollo-angular';
 import * as Query from '../../queries/queries';
+import { Repositories} from '../../models/models';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RepositoriesService {
   private searchQuery: string;
+  private repositoryCount: string;
+  private searchResult: Repositories = new Repositories();
 
   constructor(private http: HttpClient, private apollo: Apollo) { }
 
@@ -40,7 +43,8 @@ export class RepositoriesService {
         .valueChanges
         .map((res: any) => res.data.search)
         .subscribe((res) => {
-          resolve(res);
+          this.repositoryCount = res.repositoryCount;
+          resolve(this.repositoryCount);
         }, (err) => {
           reject(err);
         });
@@ -57,7 +61,7 @@ export class RepositoriesService {
     if (searchedTerms.length === 0) {
       mostStarred = 'stars:>30000';
     }
-    return new Promise((resolve, reject) => {
+    return new Promise<Repositories>((resolve, reject) => {
       this.apollo.watchQuery({
         query: Query.SearchPublicRepositories,
         variables: {queryString: 'is:public sort:stars ' + mostStarred + ' ' + this.searchQuery}
@@ -65,7 +69,9 @@ export class RepositoriesService {
         .valueChanges
         .map((res: any) => res.data.search)
         .subscribe((res) => {
-          resolve(res);
+          this.searchResult.repositoryList = res.edges;
+          this.searchResult.repositoryCount = res.repositoryCount;
+          resolve(this.searchResult);
         }, (err) => {
           reject(err);
         });

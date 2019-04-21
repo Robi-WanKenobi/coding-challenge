@@ -1,8 +1,7 @@
-import {Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
+import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Apollo } from 'apollo-angular';
-import * as Query from '../../queries/queries';
-import 'rxjs/add/operator/map';
-import {RepositoriesService} from '../../services/repositories/repositories.service';
+import { RepositoriesService } from '../../services/repositories/repositories.service';
+import { Repositories, Repository } from '../../models/models';
 
 @Component({
   selector: 'app-repo-list',
@@ -13,18 +12,14 @@ export class RepoListComponent implements OnInit {
 
   constructor(private apollo: Apollo, private repoService: RepositoriesService, private renderer: Renderer2) { }
 
-  repositories: Array<any> = [];
-  repositoryCount: number;
-  totalRepositoryCount: number;
+  searchResult: Repositories = new Repositories();
+  repositories: Array<Repository> = [];
+  repositoryCount: string;
+  totalRepositoryCount: string;
   loading = true;
   modalLoading: boolean;
-  selectedRepoName: '';
-  selectedRepoUrl; '';
-  selectedRepoOwner: '';
-  selectedRepoOwnerAvatarUrl: '';
-  selectedRepoDescription: '';
+  selectedRepository: Repository = new Repository();
   selectedRepoContributors: {};
-  selectedRepoContributorsCount: number;
   searchTerm: '';
   searchedTerms: Array<string> = [];
   searched: boolean;
@@ -42,7 +37,7 @@ export class RepoListComponent implements OnInit {
 
   getPublicReposCount() {
     this.repoService.getAllPublicRepositoriesCount().then((res) => {
-      this.totalRepositoryCount = Object.values(res)[0];
+      this.totalRepositoryCount = res.toString();
       this.repositoryCount = this.totalRepositoryCount;
     }, (err) => {
       console.log(err);
@@ -52,13 +47,14 @@ export class RepoListComponent implements OnInit {
   search(searchedTerms) {
     this.loading = true;
     this.repoService.searchPublicRepositories(searchedTerms).then((res) => {
-      this.repositories = Object.values(res)[1];
+      this.searchResult = res;
+      this.repositories = this.searchResult.repositoryList;
       if (searchedTerms.length === 0) {
         this.repositoryCount = this.totalRepositoryCount;
       } else {
-        this.repositoryCount = Object.values(res)[0];
+        this.repositoryCount = this.searchResult.repositoryCount;
       }
-      if (this.repositoryCount !== 0) {
+      if (this.repositoryCount !== '0') {
         this.results = true;
         this.searched = true;
       } else {
@@ -72,18 +68,17 @@ export class RepoListComponent implements OnInit {
 
   fetchRepository(name, url, description, owner, avatarUrl) {
     this.modalLoading = true;
-    this.selectedRepoName = name;
-    this.selectedRepoUrl = url;
-    this.selectedRepoOwner = owner;
-    this.selectedRepoOwnerAvatarUrl = avatarUrl;
-    this.selectedRepoDescription = description;
-    this.getContributors(this.selectedRepoOwner, this.selectedRepoName);
+    this.selectedRepository.name = name;
+    this.selectedRepository.url = url;
+    this.selectedRepository.description = description;
+    this.selectedRepository.owner.login = owner;
+    this.selectedRepository.owner.avatarUrl = avatarUrl;
+    this.getContributors(owner, name);
   }
 
   getContributors(owner, repo) {
     this.repoService.getContributors(owner, repo).then((res) => {
       this.selectedRepoContributors = res;
-      this.selectedRepoContributorsCount = Object.keys(this.selectedRepoContributors).length;
       this.modalLoading = false;
     }, (err) => {
       console.log(err);
@@ -100,9 +95,9 @@ export class RepoListComponent implements OnInit {
       } else {
         this.renderer.addClass(this.filtersField.nativeElement, 'shake');
       }
-      this.searchTerm = '';
       this.renderer.selectRootElement(this.searchField.nativeElement).blur();
     }
+    this.searchTerm = '';
   }
 
   removeSearchTerm(term) {
