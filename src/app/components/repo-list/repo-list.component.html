@@ -1,5 +1,5 @@
 <div class="container-fluid full">
-  <h3 class="text-center page-title"><i class="fab fa-github-square"></i> Github public repositories search engine</h3>
+  <h3 class="text-center page-title"><i class="fab fa-github-square"></i> Github public repositories</h3>
 
   <form class="top-form" #searchForm="ngForm" (ngSubmit)="addSearchTerm(searchForm)">
     <div class="form-group">
@@ -8,7 +8,7 @@
       <button class="btn btn-primary search-button shadow" type="submit"><i class="fas fa-search"></i></button>
     </div>
   </form>
-  <div class="col-md-12 filters" *ngIf="searched">
+  <div class="col-md-12 filters" *ngIf="searched && !loading">
     <a *ngFor="let term of searchedTerms" href="" (click)="removeSearchTerm(term)" onclick="return false" class="badge badge-danger">{{term}} x</a>
   </div>
 

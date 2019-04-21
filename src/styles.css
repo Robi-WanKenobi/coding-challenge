@@ -24,7 +24,6 @@ Form
   flex-direction: row;
 }
 .full .form-group input{
-  text-align:center;
   border-bottom-right-radius: 0px;
   border-top-right-radius: 0px;
 }
@@ -105,6 +104,7 @@ Modal
 .modal-content p {
   padding-top: 0.5rem;
   padding-left: 1rem;
+  padding-right: .75rem;
 }
 .repo-owner {
   padding-left: 1rem;

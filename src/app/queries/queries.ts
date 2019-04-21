@@ -2,13 +2,13 @@
 
 import gql from 'graphql-tag';
 
-export const AllPublicRepos = gql`{
+export const AllPublicReposCount = gql`{
   search(query: "is:public", type: REPOSITORY, first: 100) {
     repositoryCount
   }
 }`;
 
-export const MostFavouritedPublicRepos = gql`{
+export const MostStarredPublicRepos = gql`{
   search(query: "is:public stars:>30000 sort:stars", type: REPOSITORY, first: 100) {
     repositoryCount
     edges {

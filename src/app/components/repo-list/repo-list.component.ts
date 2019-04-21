@@ -3,7 +3,6 @@ import { Apollo } from 'apollo-angular';
 import * as Query from '../../queries/queries';
 import 'rxjs/add/operator/map';
 import {RepositoriesService} from '../../services/repositories/repositories.service';
-import {forEach} from '@angular/router/src/utils/collection';
 
 @Component({
   selector: 'app-repo-list',
@@ -42,7 +41,7 @@ export class RepoListComponent implements OnInit {
     this.searched = false;
     this.loading = true;
     this.getPublicReposCount();
-    this.apollo.watchQuery({ query: Query.MostFavouritedPublicRepos })
+    this.apollo.watchQuery({ query: Query.MostStarredPublicRepos })
       .valueChanges
       .map((result: any) => result.data.search).subscribe((data) => {
       this.repositories = data.edges;
@@ -52,7 +51,7 @@ export class RepoListComponent implements OnInit {
   }
 
   getPublicReposCount() {
-    this.apollo.watchQuery({ query: Query.AllPublicRepos })
+    this.apollo.watchQuery({ query: Query.AllPublicReposCount })
       .valueChanges
       .map((result: any) => result.data.search).subscribe((data) => {
       this.repositoryCount = data.repositoryCount;
@@ -80,16 +79,20 @@ export class RepoListComponent implements OnInit {
   }
 
   addSearchTerm(searchForm) {
-    const term = searchForm.value.search;
-    this.searchedTerms.push(term);
-    this.search(this.searchedTerms);
-    this.searchTerm = '';
-    this.nameField.nativeElement.blur();
+    let term = searchForm.value.search;
+    term = this.ltrim(term);
+    term = this.rtrim(term);
+    if (term.length !== 0 && (term !== '' || !term)) {
+      this.searchedTerms.push(term);
+      this.search(this.searchedTerms);
+      this.searchTerm = '';
+      this.nameField.nativeElement.blur();
+    }
   }
 
   removeSearchTerm(term) {
-    const index = this.searchedTerms.indexOf(term);
-    this.searchedTerms.splice(term, 1);
+    const index = this.searchedTerms.indexOf(term, 0);
+    this.searchedTerms.splice(index, 1);
     this.loading = true;
     if (this.searchedTerms.length === 0) {
       this.searched = false;
@@ -104,6 +107,7 @@ export class RepoListComponent implements OnInit {
     this.searchQuery = '';
     for (const term of searchTerms) {
       this.searchQuery = this.searchQuery + ' ' + term;
+      this.searchQuery = this.ltrim(this.searchQuery);
     }
     this.apollo.watchQuery({
       query: Query.SearchPublicRepositories,
@@ -122,4 +126,18 @@ export class RepoListComponent implements OnInit {
       this.loading = false;
     });
     }
+
+  ltrim(str) {
+    if (str == null) {
+      return str;
+    }
+    return str.replace(/^\s+/g, '');
+  }
+
+  rtrim(str) {
+    if (str == null) {
+      return str;
+    }
+    return str.replace(/\s+$/g, '');
+  }
 }
