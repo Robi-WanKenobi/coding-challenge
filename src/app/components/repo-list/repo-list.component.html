@@ -50,9 +50,10 @@
           <p>{{selectedRepository?.description}}</p>
           <table class="table">
             <tbody>
-            <tr *ngFor="let contributor of selectedRepoContributors" >
+            <tr *ngFor="let contributor of selectedRepoContributors">
                 <td class="text-left repo-contributor"><img src="{{contributor?.avatar_url}}" alt="contributor_avatar" class="img-thumbnail"> {{contributor?.login}}</td>
-                <td class="text-right">{{contributor?.contributions}} contributions</td>
+                <td class="text-right contributions">{{contributor?.contributions}} contributions</td>
+                <td class="text-right user-link"><a href="{{contributor?.html_url}}" target="_blank"><i class="fas fa-external-link-square-alt"></i></a></td>
             </tr>
             </tbody>
           </table>

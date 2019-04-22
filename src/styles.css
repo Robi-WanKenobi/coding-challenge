@@ -133,6 +133,13 @@ Modal
 }
 .table td.repo-contributor {
   padding-left: 1rem;
+  width: 45%;
+}
+.table td.contributions {
+  width: 45%;
+}
+.table td.user-link {
+  width: 10%;
 }
 .modal-header {
   padding-bottom: 8px;
@@ -147,6 +154,12 @@ Modal
 }
 .modal-body table {
   margin-bottom: 0px;
+}
+.modal-body a {
+  color: #212529;
+}
+.modal-body a:hover {
+  color: #21252969;
 }
 .modal-content .img-thumbnail {
   width: 20px;
