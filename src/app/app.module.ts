@@ -11,6 +11,8 @@ import { ApolloConfigModule } from './modules/apollo-config/apollo-config.module
 
 import { RepositoriesService } from './services/repositories/repositories.service';
 import { LoadingComponent } from './components/tools/loading/loading.component';
+import { repositoriesActionReducer } from './store/repositories.reducer';
+import { StoreModule } from '@ngrx/store';
 
 const routes: Routes = [
   { path: '', component: RepoListComponent }
@@ -27,7 +29,8 @@ const routes: Routes = [
     HttpClientModule,
     ApolloConfigModule,
     FormsModule,
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes),
+    StoreModule.forRoot({repositories: repositoriesActionReducer })
   ],
   providers: [RepositoriesService],
   bootstrap: [AppComponent]

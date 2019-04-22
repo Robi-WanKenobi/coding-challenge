@@ -47,12 +47,12 @@
         </div>
 
         <div class="modal-body">
-          <p>{{selectedRepository.description}}</p>
+          <p>{{selectedRepository?.description}}</p>
           <table class="table">
             <tbody>
             <tr *ngFor="let contributor of selectedRepoContributors" >
-                <td class="text-left repo-contributor"><img src="{{contributor.avatar_url}}" alt="contributor_avatar" class="img-thumbnail"> {{contributor.login}}</td>
-                <td class="text-right">{{contributor.contributions}} contributions</td>
+                <td class="text-left repo-contributor"><img src="{{contributor?.avatar_url}}" alt="contributor_avatar" class="img-thumbnail"> {{contributor?.login}}</td>
+                <td class="text-right">{{contributor?.contributions}} contributions</td>
             </tr>
             </tbody>
           </table>

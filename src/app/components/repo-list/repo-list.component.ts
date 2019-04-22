@@ -1,7 +1,10 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { RepositoriesService } from '../../services/repositories/repositories.service';
-import { Repositories, Repository } from '../../models/models';
+import {Owner, Repositories, Repository} from '../../models/models';
+import { select, Store } from '@ngrx/store';
+import { AppState } from '../../app.state';
+import {RepositoriesGetAction} from '../../store/repositories.action';
 
 @Component({
   selector: 'app-repo-list',
@@ -10,23 +13,35 @@ import { Repositories, Repository } from '../../models/models';
 })
 export class RepoListComponent implements OnInit {
 
-  constructor(private apollo: Apollo, private repoService: RepositoriesService, private renderer: Renderer2) { }
-
-  searchResult: Repositories = new Repositories();
+  searchResult = new Repositories();
   repositories: Array<Repository> = [];
   repositoryCount: string;
   totalRepositoryCount: string;
-  loading = true;
-  modalLoading: boolean;
-  selectedRepository: Repository = new Repository();
+  selectedRepository: Repository;
+  selectedRepoOwner: Owner;
   selectedRepoContributors: {};
   searchTerm: '';
   searchedTerms: Array<string> = [];
+
+  loading: boolean;
+  modalLoading: boolean;
   searched: boolean;
   results: boolean;
 
   @ViewChild('searchInput') searchField: ElementRef;
   @ViewChild('filtersContainer') filtersField: ElementRef;
+
+  constructor(private apollo: Apollo,
+              private repoService: RepositoriesService,
+              private renderer: Renderer2,
+              public store: Store<AppState>) {
+    this.store.pipe(select(state => state.repositories))
+      .subscribe(repositories => {
+        if (repositories) {
+          this.searchResult = repositories.repositories;
+        }
+      });
+  }
 
   ngOnInit() {
     this.loading = true;
@@ -47,7 +62,7 @@ export class RepoListComponent implements OnInit {
   search(searchedTerms) {
     this.loading = true;
     this.repoService.searchPublicRepositories(searchedTerms).then((res) => {
-      this.searchResult = res;
+      this.store.dispatch(new RepositoriesGetAction(res));
       this.repositories = this.searchResult.repositoryList;
       if (searchedTerms.length === 0) {
         this.repositoryCount = this.totalRepositoryCount;
@@ -68,11 +83,8 @@ export class RepoListComponent implements OnInit {
 
   fetchRepository(name, url, description, owner, avatarUrl) {
     this.modalLoading = true;
-    this.selectedRepository.name = name;
-    this.selectedRepository.url = url;
-    this.selectedRepository.description = description;
-    this.selectedRepository.owner.login = owner;
-    this.selectedRepository.owner.avatarUrl = avatarUrl;
+    this.selectedRepoOwner = new Owner(owner, avatarUrl);
+    this.selectedRepository = new Repository(name, description, url, this.selectedRepoOwner);
     this.getContributors(owner, name);
   }
 

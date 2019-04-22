@@ -8,7 +8,10 @@ export class Owner {
   login: string;
   avatarUrl: string;
 
-  constructor() {}
+  constructor(login, avatar) {
+    this.login = login;
+    this.avatarUrl = avatar;
+  }
 }
 
 export class Repository {
@@ -18,11 +21,11 @@ export class Repository {
   stargazers: Stargazer;
   owner: Owner;
 
-  constructor() {
-    this.name = '';
-    this.description = '';
-    this.url = '';
-    this.owner = new Owner();
+  constructor(name, description, url, owner) {
+    this.name = name;
+    this.description = description;
+    this.url = url;
+    this.owner = new Owner(owner.login, owner.avatarUrl);
   }
 }
 

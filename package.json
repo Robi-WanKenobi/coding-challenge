@@ -16,9 +16,11 @@
     "@angular/compiler": "~7.2.0",
     "@angular/core": "~7.2.0",
     "@angular/forms": "~7.2.0",
+    "@angular/http": "latest",
     "@angular/platform-browser": "~7.2.0",
     "@angular/platform-browser-dynamic": "~7.2.0",
     "@angular/router": "~7.2.0",
+    "@ngrx/store": "^7.4.0",
     "apollo-angular": "^1.5.0",
     "apollo-angular-link-http": "^1.6.0",
     "apollo-cache-inmemory": "^1.5.1",
@@ -32,8 +34,7 @@
     "rxjs": "~6.3.3",
     "rxjs-compat": "^6.4.0",
     "tslib": "^1.9.0",
-    "zone.js": "~0.8.26",
-    "@angular/http": "latest"
+    "zone.js": "~0.8.26"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.13.0",
