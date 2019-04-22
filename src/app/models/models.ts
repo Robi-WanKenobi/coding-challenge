@@ -31,10 +31,10 @@ export class Repository {
 
 export class Repositories {
   repositoryList: Repository[];
-  repositoryCount: string;
+  repositoryCount: number;
 
   constructor() {
     this.repositoryList = new Array<Repository>(100);
-    this.repositoryCount = '';
+    this.repositoryCount = 0;
   }
 }

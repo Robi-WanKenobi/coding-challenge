@@ -4,6 +4,12 @@ Page title
 .page-title {
   margin-top: 20px;
 }
+.diagram {
+  color: #212529;
+}
+.diagram:hover {
+  color: #21252969;
+}
 
 /*
 Form
@@ -73,10 +79,10 @@ Table
 .table-hover tbody tr:hover {
   cursor: pointer;
 }
-.fa-sad-tear {
-  margin-bottom: 20px;
+.container-no-results h6, .container-error h6 {
+  margin-top: 20px;
 }
-.container-no-results {
+.container-no-results, .container-error {
   color: #6b6b6b;
   margin-top: 20px;
 }
@@ -154,6 +160,7 @@ Modal
 }
 .modal-body table {
   margin-bottom: 0px;
+  border-bottom: 1px solid lightgray;
 }
 .modal-body a {
   color: #212529;
@@ -161,12 +168,12 @@ Modal
 .modal-body a:hover {
   color: #21252969;
 }
+.modal-body .alert {
+  margin-bottom: 0px;
+}
 .modal-content .img-thumbnail {
   width: 20px;
   padding: 0px;
   margin-bottom: 5px;
   border: none;
-}
-.modal-footer a.btn {
-  border-radius: 0px;
 }

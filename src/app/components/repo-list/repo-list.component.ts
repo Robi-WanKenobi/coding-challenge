@@ -5,6 +5,7 @@ import {Owner, Repositories, Repository} from '../../models/models';
 import { select, Store } from '@ngrx/store';
 import { AppState } from '../../app.state';
 import {RepositoriesGetAction} from '../../store/repositories.action';
+import { Logger } from 'codelyzer/util/logger';
 
 @Component({
   selector: 'app-repo-list',
@@ -15,11 +16,12 @@ export class RepoListComponent implements OnInit {
 
   searchResult = new Repositories();
   repositories: Array<Repository> = [];
-  repositoryCount: string;
-  totalRepositoryCount: string;
+  repositoryCount: number;
+  totalRepositoryCount: number;
   selectedRepository: Repository;
   selectedRepoOwner: Owner;
   selectedRepoContributors: {};
+  selectedRepoContributorsCount: number;
   searchTerm: '';
   searchedTerms: Array<string> = [];
 
@@ -27,6 +29,8 @@ export class RepoListComponent implements OnInit {
   modalLoading: boolean;
   searched: boolean;
   results: boolean;
+  error: boolean;
+  contributorsError: boolean;
 
   @ViewChild('searchInput') searchField: ElementRef;
   @ViewChild('filtersContainer') filtersField: ElementRef;
@@ -52,10 +56,12 @@ export class RepoListComponent implements OnInit {
 
   getPublicReposCount() {
     this.repoService.getAllPublicRepositoriesCount().then((res) => {
-      this.totalRepositoryCount = res.toString();
+      this.totalRepositoryCount = res;
       this.repositoryCount = this.totalRepositoryCount;
+      this.error = false;
     }, (err) => {
-      console.log(err);
+      this.error = true;
+      this.loading = false;
     });
   }
 
@@ -69,16 +75,19 @@ export class RepoListComponent implements OnInit {
       } else {
         this.repositoryCount = this.searchResult.repositoryCount;
       }
-      if (this.repositoryCount !== '0') {
+      if (this.repositoryCount !== 0) {
         this.results = true;
         this.searched = true;
       } else {
         this.results = false;
       }
+      this.error = false;
       this.loading = false;
     }, (err) => {
-      console.log(err);
+      this.error = true;
+      this.loading = false;
     });
+
   }
 
   fetchRepository(name, url, description, owner, avatarUrl) {
@@ -91,9 +100,13 @@ export class RepoListComponent implements OnInit {
   getContributors(owner, repo) {
     this.repoService.getContributors(owner, repo).then((res) => {
       this.selectedRepoContributors = res;
+      this.selectedRepoContributorsCount = Object.keys(this.selectedRepoContributors).length;
       this.modalLoading = false;
+      this.contributorsError = false;
     }, (err) => {
-      console.log(err);
+      this.selectedRepoContributors = [];
+      this.modalLoading = false;
+      this.contributorsError = true;
     });
   }
 

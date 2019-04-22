@@ -1,5 +1,5 @@
 <div class="container-fluid full">
-  <h3 class="text-center page-title"><i class="fab fa-github-square"></i> Github public repositories</h3>
+  <h3 class="text-center page-title"><a class="diagram" href="../../../assets/images/code-challenge-schema.png" target="_blank"><i class="fab fa-github-square"></i></a> Github public repositories</h3>
 
   <form class="top-form" #searchForm="ngForm" (ngSubmit)="addSearchTerm(searchForm)">
     <div class="form-group">
@@ -15,15 +15,19 @@
   <app-loading [loading]="loading"></app-loading>
 
   <div class="container-results" *ngIf="!loading">
-
     <h6 class="text-center n-repos" *ngIf="results"><strong>{{repositoryCount}} results found</strong></h6>
-    <div class="container-no-results" *ngIf="!results">
+    <div class="container-no-results" *ngIf="!results && !error">
       <div class="text-center">
-        <i class="far fa-sad-tear fa-10x"></i>
+        <i class="far fa-frown fa-10x"></i>
       </div>
       <h6 class="text-center"><strong>Sorry, no results were found.</strong></h6>
     </div>
-
+    <div class="container-error" *ngIf="error">
+      <div class="text-center">
+        <i class="fas fa-wifi fa-10x"></i>
+      </div>
+      <h6 class="text-center"><strong>Sorry, some network problem happened. Please, try again later.</strong></h6>
+    </div>
     <table class="table table-hover">
       <tbody>
       <tr *ngFor="let repo of repositories" data-toggle="modal" data-target="#repoModal"
@@ -57,12 +61,19 @@
             </tr>
             </tbody>
           </table>
+          <div *ngIf="!contributorsError&&selectedRepoContributorsCount < 30" class="alert alert-secondary" role="alert">
+            If you are looking for more information, you can always
+            <a href="{{selectedRepository?.url}}" target="_blank" class="alert-link">view this repository</a> on GitHub.
+          </div>
+          <div *ngIf="!contributorsError&&selectedRepoContributorsCount == 30" class="alert alert-info" role="alert">
+            You are seeing only the top contributors, to check them all you can
+            <a href="{{selectedRepository?.url}}" target="_blank" class="alert-link">view this repository</a> on GitHub.
+          </div>
+          <div *ngIf="contributorsError" class="alert alert-warning" role="alert">
+            Sorry, the contributor list is too large to list it for this repository, to see them you can
+            <a href="{{selectedRepository?.url}}" target="_blank" class="alert-link">view this repository</a> on GitHub.
+          </div>
         </div>
-
-        <div class="modal-footer">
-          <a class="btn btn-secondary btn-block" href="{{selectedRepository?.url}}" target="_blank">View on GitHub</a>
-        </div>
-
       </div>
     </div>
   </div>

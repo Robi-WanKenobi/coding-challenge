@@ -11,7 +11,7 @@ import { Repositories} from '../../models/models';
 })
 export class RepositoriesService {
   private searchQuery: string;
-  private repositoryCount: string;
+  private repositoryCount: number;
   private searchResult: Repositories = new Repositories();
 
   constructor(private http: HttpClient, private apollo: Apollo) { }
@@ -38,7 +38,7 @@ export class RepositoriesService {
   }
 
   getAllPublicRepositoriesCount() {
-    return new Promise((resolve, reject) => {
+    return new Promise<number>((resolve, reject) => {
       this.apollo.watchQuery({ query: Query.AllPublicRepositoriesCount })
         .valueChanges
         .map((res: any) => res.data.search)
