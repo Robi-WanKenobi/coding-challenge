@@ -12,6 +12,6 @@ RUN npm install
 
 # Bundle app source
 COPY . /codechallenge
-RUN ng build
+RUN ng build --prod
 
 EXPOSE 4200
