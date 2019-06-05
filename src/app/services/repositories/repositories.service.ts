@@ -37,40 +37,58 @@ export class RepositoriesService {
     });
   }
 
-  getAllPublicRepositoriesCount() {
-    return new Promise<number>((resolve, reject) => {
-      this.apollo.watchQuery({ query: Query.AllPublicRepositoriesCount })
-        .valueChanges
-        .map((res: any) => res.data.search)
-        .subscribe((res) => {
-          this.repositoryCount = res.repositoryCount;
-          resolve(this.repositoryCount);
-        }, (err) => {
-          reject(err);
-        });
-    });
-  }
-
-  searchPublicRepositories(searchedTerms) {
+  searchPublicRepositories(searchedTerms, minStars, orderDirection, cursor) {
     this.searchQuery = '';
     for (const term of searchedTerms) {
       this.searchQuery = this.searchQuery + ' ' + term;
       this.searchQuery = RepositoriesService.formatString(this.searchQuery);
     }
-    let mostStarred = '';
-    if (searchedTerms.length === 0) {
-      mostStarred = 'stars:>30000';
+    const starsQuery = 'stars:>=' + minStars;
+
+    if (cursor) {
+      return this.doFetch(orderDirection, starsQuery, cursor);
+    } else {
+      return this.doSearch(orderDirection, starsQuery);
     }
+
+  }
+
+  doSearch(orderDirection, starsQuery) {
     return new Promise<Repositories>((resolve, reject) => {
       this.apollo.watchQuery({
         query: Query.SearchPublicRepositories,
-        variables: {queryString: 'is:public sort:stars ' + mostStarred + ' ' + this.searchQuery}
+        variables: {queryString: 'is:public sort:stars-' + orderDirection + ' ' + starsQuery + ' ' + this.searchQuery,
+          numResults: 25}
       })
         .valueChanges
         .map((res: any) => res.data.search)
         .subscribe((res) => {
           this.searchResult.repositoryList = res.edges;
           this.searchResult.repositoryCount = res.repositoryCount;
+          this.searchResult.hasNextPage = res.pageInfo.hasNextPage;
+          this.searchResult.endCursor = res.pageInfo.endCursor;
+          resolve(this.searchResult);
+        }, (err) => {
+          reject(err);
+        });
+    });
+  }
+
+  doFetch(orderDirection, starsQuery, cursor) {
+    return new Promise<Repositories>((resolve, reject) => {
+      this.apollo.watchQuery({
+        query: Query.LoadMorePublicRepositories,
+        variables: {queryString: 'is:public sort:stars-' + orderDirection + ' ' + starsQuery + ' ' + this.searchQuery,
+          numResults: 25,
+          afterCursor: cursor}
+      })
+        .valueChanges
+        .map((res: any) => res.data.search)
+        .subscribe((res) => {
+          this.searchResult.repositoryList = res.edges;
+          this.searchResult.repositoryCount = res.repositoryCount;
+          this.searchResult.hasNextPage = res.pageInfo.hasNextPage;
+          this.searchResult.endCursor = res.pageInfo.endCursor;
           resolve(this.searchResult);
         }, (err) => {
           reject(err);

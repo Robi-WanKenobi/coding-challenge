@@ -8,6 +8,9 @@
       <button class="btn btn-primary search-button shadow" type="submit"><i class="fas fa-search"></i></button>
     </div>
   </form>
+  <div class="star-slider">
+    <ng5-slider [(value)]="value" [options]="options" (userChangeEnd)="starRange(value)"></ng5-slider>
+  </div>
   <div #filtersContainer class="col-md-12 filters" *ngIf="searched && !loading">
     <a *ngFor="let term of searchedTerms" href="" (click)="removeSearchTerm(term)" onclick="return false" class="badge badge-danger">{{term}} x</a>
   </div>
@@ -15,7 +18,9 @@
   <app-loading [loading]="loading"></app-loading>
 
   <div class="container-results" *ngIf="!loading">
-    <h6 class="text-center n-repos" *ngIf="results"><strong>{{repositoryCount}} results found</strong></h6>
+    <h6 class="text-center n-repos" *ngIf="results"><strong>{{repositoryCount}} results found</strong>
+      <button (click)="orderByStars()" class="btn btn-sm btn-secondary order"><i class="fas fa-sort"></i>&nbsp;<i class="fas fa-star"></i></button>
+    </h6>
     <div class="container-no-results" *ngIf="!results && !error">
       <div class="text-center">
         <i class="far fa-frown fa-10x"></i>
@@ -34,10 +39,15 @@
           (click)="fetchRepository(repo?.node.name, repo?.node.url, repo?.node.description, repo?.node.owner.login, repo?.node.owner.avatarUrl)">
         <td class="text-left"><img src="{{repo?.node.owner.avatarUrl}}" alt="owner_avatar" class="img-thumbnail"> {{repo?.node.owner.login}}</td>
         <td class="text-center repo-name"><strong>{{repo?.node.name}}</strong></td>
-        <td class="text-right hide-mobile">{{repo?.node.stargazers.totalCount}} <i class="fas fa-star"></i></td>
+        <td class="text-right hide-mobile">{{repo?.node.stargazers.totalCount}}&nbsp;<i class="fas fa-star"></i></td>
       </tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="showMore text-center">
+    <button class="btn btn-outline-secondary" (click)="showMoreResults()" *ngIf="!loading && hasNextPage && !loadingMore" >Load more</button>
+    <app-loading [loading]="loadingMore"></app-loading>
   </div>
 
   <div class="modal fade" id="repoModal">

@@ -15,7 +15,7 @@ Page title
 Form
  */
 .top-form {
-  margin: 40px 10px 20px;
+  margin: 40px 10px -10px;
 }
 .shadow {
   -moz-box-shadow:    3px 3px 5px 6px #ccc;
@@ -33,6 +33,54 @@ Form
 .full .form-group .search-button {
   border-bottom-left-radius: 0px;
   border-top-left-radius: 0px;
+}
+
+/*
+Toolbar
+ */
+.order {
+  margin-left: 10px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-top: -5px;
+}
+.star-slider {
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-bottom: 5px;
+}
+.star-slider .ng5-slider-bubble::after {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 800;
+  content: " ";
+  color: black;
+}
+.star-slider .ng5-slider-bubble::before {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 800;
+  content: " ";
+  color: black;
+}
+.star-slider .ng5-slider-bar{
+  background-color: #6b6b6b !important;
+}
+.star-slider .ng5-slider-pointer {
+  background-color: black !important;
+  width: 24px !important;
+  height: 24px !important;
+  top: -10px !important;
+}
+.star-slider .ng5-slider-pointer:after {
+  background-color: black !important;
+  top: -8px !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+.star-slider .ng5-slider-active {
+  outline: none !important;
+}
+.star-slider .ng5-slider-floor, .star-slider .ng5-slider-ceil {
+  display: none !important;
 }
 
 /*
@@ -121,6 +169,9 @@ td .img-thumbnail {
   .full td.repo-name {
     text-align: right!important;
   }
+}
+.showMore {
+  margin-bottom: 30px;
 }
 
 /*

@@ -1,9 +1,3 @@
-export class Stargazer {
-  totalCount: number;
-
-  constructor() {}
-}
-
 export class Owner {
   login: string;
   avatarUrl: string;
@@ -18,7 +12,6 @@ export class Repository {
   name: string;
   description: string;
   url: string;
-  stargazers: Stargazer;
   owner: Owner;
 
   constructor(name, description, url, owner) {
@@ -32,6 +25,8 @@ export class Repository {
 export class Repositories {
   repositoryList: Repository[];
   repositoryCount: number;
+  hasNextPage: boolean;
+  endCursor: string;
 
   constructor() {
     this.repositoryList = new Array<Repository>(100);

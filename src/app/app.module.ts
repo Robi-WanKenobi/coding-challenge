@@ -13,6 +13,7 @@ import { RepositoriesService } from './services/repositories/repositories.servic
 import { LoadingComponent } from './components/tools/loading/loading.component';
 import { repositoriesActionReducer } from './store/repositories.reducer';
 import { StoreModule } from '@ngrx/store';
+import {Ng5SliderModule} from 'ng5-slider';
 
 const routes: Routes = [
   { path: '', component: RepoListComponent }
@@ -29,6 +30,7 @@ const routes: Routes = [
     HttpClientModule,
     ApolloConfigModule,
     FormsModule,
+    Ng5SliderModule,
     RouterModule.forRoot(routes),
     StoreModule.forRoot({repositories: repositoriesActionReducer })
   ],

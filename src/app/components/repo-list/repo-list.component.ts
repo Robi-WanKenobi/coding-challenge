@@ -4,8 +4,8 @@ import { RepositoriesService } from '../../services/repositories/repositories.se
 import {Owner, Repositories, Repository} from '../../models/models';
 import { select, Store } from '@ngrx/store';
 import { AppState } from '../../app.state';
-import {RepositoriesGetAction} from '../../store/repositories.action';
-import { Logger } from 'codelyzer/util/logger';
+import { RepositoriesGetAction } from '../../store/repositories.action';
+import { Options } from 'ng5-slider';
 
 @Component({
   selector: 'app-repo-list',
@@ -17,15 +17,18 @@ export class RepoListComponent implements OnInit {
   searchResult = new Repositories();
   repositories: Array<Repository> = [];
   repositoryCount: number;
-  totalRepositoryCount: number;
   selectedRepository: Repository;
   selectedRepoOwner: Owner;
   selectedRepoContributors: {};
   selectedRepoContributorsCount: number;
   searchTerm: '';
   searchedTerms: Array<string> = [];
+  orderDirection = 'asc';
+  endCursor: string;
 
   loading: boolean;
+  loadingMore: boolean;
+  hasNextPage: boolean;
   modalLoading: boolean;
   searched: boolean;
   results: boolean;
@@ -34,6 +37,14 @@ export class RepoListComponent implements OnInit {
 
   @ViewChild('searchInput') searchField: ElementRef;
   @ViewChild('filtersContainer') filtersField: ElementRef;
+
+  value = 0;
+  minStars = this.value;
+  options: Options = {
+    floor: 0,
+    ceil: 75000,
+    step: 100,
+  }
 
   constructor(private apollo: Apollo,
               private repoService: RepositoriesService,
@@ -49,32 +60,20 @@ export class RepoListComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true;
+    this.loadingMore = false;
     this.searched = false;
-    this.getPublicReposCount();
     this.search(this.searchedTerms);
   }
 
-  getPublicReposCount() {
-    this.repoService.getAllPublicRepositoriesCount().then((res) => {
-      this.totalRepositoryCount = res;
-      this.repositoryCount = this.totalRepositoryCount;
-      this.error = false;
-    }, (err) => {
-      this.error = true;
-      this.loading = false;
-    });
-  }
-
+  // Function to search by search terms, minimum stars and ordered by
   search(searchedTerms) {
     this.loading = true;
-    this.repoService.searchPublicRepositories(searchedTerms).then((res) => {
+    this.repoService.searchPublicRepositories(searchedTerms, this.minStars, this.orderDirection, null).then((res) => {
       this.store.dispatch(new RepositoriesGetAction(res));
       this.repositories = this.searchResult.repositoryList;
-      if (searchedTerms.length === 0) {
-        this.repositoryCount = this.totalRepositoryCount;
-      } else {
-        this.repositoryCount = this.searchResult.repositoryCount;
-      }
+      this.repositoryCount = this.searchResult.repositoryCount;
+      this.hasNextPage = this.searchResult.hasNextPage;
+      this.endCursor = this.searchResult.endCursor;
       if (this.repositoryCount !== 0) {
         this.results = true;
         this.searched = true;
@@ -90,6 +89,7 @@ export class RepoListComponent implements OnInit {
 
   }
 
+  // Get repository basic information
   fetchRepository(name, url, description, owner, avatarUrl) {
     this.modalLoading = true;
     this.selectedRepoOwner = new Owner(owner, avatarUrl);
@@ -97,6 +97,7 @@ export class RepoListComponent implements OnInit {
     this.getContributors(owner, name);
   }
 
+  // Get the input repository contributors
   getContributors(owner, repo) {
     this.repoService.getContributors(owner, repo).then((res) => {
       this.selectedRepoContributors = res;
@@ -110,6 +111,7 @@ export class RepoListComponent implements OnInit {
     });
   }
 
+  // Add text inputs to the search terms
   addSearchTerm(searchForm) {
     let term = searchForm.value.search;
     term = RepositoriesService.formatString(term);
@@ -125,6 +127,7 @@ export class RepoListComponent implements OnInit {
     this.searchTerm = '';
   }
 
+  // Remove term from the search terms
   removeSearchTerm(term) {
     this.loading = true;
     const index = this.searchedTerms.indexOf(term, 0);
@@ -132,6 +135,7 @@ export class RepoListComponent implements OnInit {
     this.search(this.searchedTerms);
   }
 
+  // Check if text input is already in the search terms
   isAlreadySearched(searchTerm) {
     for (const term of this.searchedTerms) {
       if (term.localeCompare(searchTerm) === 0) {
@@ -141,6 +145,45 @@ export class RepoListComponent implements OnInit {
     return false;
   }
 
+  // Sets the minimum stars
+  starRange(minStars) {
+    this.minStars = minStars;
+    this.search(this.searchedTerms);
+  }
+
+  // Order by ASC or DESC number of stars
+  orderByStars() {
+    if (this.orderDirection.localeCompare('desc') === 0) {
+      this.orderDirection = 'asc';
+    } else {
+      this.orderDirection = 'desc';
+    }
+    this.search(this.searchedTerms);
+  }
+
+  // Function to show more results
+  showMoreResults() {
+    this.loadingMore = true;
+    this.repoService.searchPublicRepositories(this.searchedTerms, this.minStars, this.orderDirection, this.endCursor).then((res) => {
+      this.store.dispatch(new RepositoriesGetAction(res));
+      this.repositories = this.repositories.concat(this.searchResult.repositoryList);
+      this.hasNextPage = this.searchResult.hasNextPage;
+      this.endCursor = this.searchResult.endCursor;
+      if (this.repositoryCount !== 0) {
+        this.results = true;
+        this.searched = true;
+      } else {
+        this.results = false;
+      }
+      this.error = false;
+      this.loadingMore = false;
+    }, (err) => {
+      this.error = true;
+      this.loadingMore = false;
+    });
+  }
+
+  // Clears 'shake' class used for the search terms error animation
   clearFiltersClass() {
     this.renderer.removeClass(this.filtersField.nativeElement, 'shake');
   }
